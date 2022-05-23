@@ -10,11 +10,12 @@ class Roles(Model):
 class User(Model):
     Name = models.CharField(max_length = 500)
     LastName = models.CharField(max_length = 500)
-    Email = models.EmailField()
+    Email = models.EmailField(unique = True)
     Password = models.CharField(max_length = 80)
     Adress = models.CharField(max_length = 600)
     Company = models.CharField(max_length = 100)
     idRol = models.ForeignKey(Roles, on_delete = models.CASCADE)
+    Active = models.BooleanField()
 
 class Models(Model):
     Name = models.CharField(max_length = 50)

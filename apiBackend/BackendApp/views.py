@@ -5,14 +5,22 @@ from django.http.response import JsonResponse
 from BackendApp.models import Roles, User, Models, Operations, Rol_operacion, FieldsOfStudy, States, Project
 from BackendApp.serializers import RolesSerilizer, UserSerilizer, ModelsSerilizer, OperationsSerilizer, Rol_operacionSerilizer, FieldsOfStudySerilizer, StatesSerilizer, ProjectSerilizer
 from django.core.files.storage import default_storage
+from rest_framework import generics
+from BackendApp import urls
 # Create your views here.
+
 
 @csrf_exempt
 def projectApi(request, id=0):
     if request.method == 'GET':
-        project = Project.objects.all()
-        project_serilizer = ProjectSerilizer(project, many = True)
-        return JsonResponse(project_serilizer.data, safe = False)
+        if id:
+            projects = Project.objects.filter(id = id)
+            project_serilizer = ProjectSerilizer(projects, many=True)
+            return JsonResponse(project_serilizer.data[0], safe = False)
+        else:
+            projects = Project.objects.all()
+            project_serilizer = ProjectSerilizer(projects, many=True)
+            return JsonResponse(project_serilizer.data, safe = False)
     elif request.method == 'POST':
         project_data = JSONParser().parse(request)
         project_serilizer = ProjectSerilizer(data = project_data)
@@ -27,7 +35,7 @@ def projectApi(request, id=0):
         if project_serilizer.is_valid():
             project_serilizer.save()
             return JsonResponse("Updated Successfully", safe=False)
-        return JsonResponse("Failed to Update")
+        return JsonResponse("Failed to Update", safe = False)
     elif request.method == 'DELETE':
         project = Project.objects.get(id = id)
         project.delete()
@@ -36,9 +44,14 @@ def projectApi(request, id=0):
 @csrf_exempt
 def userApi(request, id=0):
     if request.method == 'GET':
-        user = User.objects.all()
-        user_serilizer = UserSerilizer(user, many = True)
-        return JsonResponse(user_serilizer.data, safe = False)
+        if id:
+            user = User.objects.filter(id = id)
+            user_serilizer = UserSerilizer(user, many=True)
+            return JsonResponse(user_serilizer.data[0], safe = False)
+        else:
+            user = User.objects.all()
+            user_serilizer = UserSerilizer(user, many=True)
+            return JsonResponse(user_serilizer.data, safe = False)
     elif request.method == 'POST':
         user_data = JSONParser().parse(request)
         user_serilizer = UserSerilizer(data = user_data)
@@ -53,7 +66,7 @@ def userApi(request, id=0):
         if user_serilizer.is_valid():
             user_serilizer.save()
             return JsonResponse("Updated Successfully", safe=False)
-        return JsonResponse("Failed to Update")
+        return JsonResponse("Failed to Update", safe = False)
     elif request.method == 'DELETE':
         user = User.objects.get(id = id)
         user.delete()
@@ -64,3 +77,8 @@ def SaveFile(request):
     file = request.FILES['file']
     file_name = default_storage.save(file.name,file)
     return JsonResponse(file_name, safe = False)
+
+class StatesView(generics.RetrieveAPIView):
+    queryset = States.objects.all()
+    serializer_class = StatesSerilizer
+

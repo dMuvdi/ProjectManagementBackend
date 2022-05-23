@@ -9,7 +9,7 @@ class RolesSerilizer(serializers.ModelSerializer):
 class UserSerilizer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id','Name', 'LastName', 'Email', 'Password', 'Adress', 'Company', 'idRol')
+        fields = ('id','Name', 'LastName', 'Email', 'Password', 'Adress', 'Company', 'idRol', 'Active')
 
 class ModelsSerilizer(serializers.ModelSerializer):
     class Meta:
