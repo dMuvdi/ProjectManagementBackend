@@ -10,6 +10,7 @@ urlpatterns=[
 
     url(r'^user$',views.userApi),
     url(r'^user/([0-9]+)$',views.userApi),
+    url(r'^user/active',views.userApi),
 
     url(r'state/(?P<pk>[0-9]+)/$', StatesView.as_view(), name="StatesView"),
 

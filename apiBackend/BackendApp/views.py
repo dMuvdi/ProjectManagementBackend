@@ -7,6 +7,7 @@ from BackendApp.serializers import RolesSerilizer, UserSerilizer, ModelsSerilize
 from django.core.files.storage import default_storage
 from rest_framework import generics
 from BackendApp import urls
+from django.urls import reverse
 # Create your views here.
 
 
@@ -46,6 +47,10 @@ def userApi(request, id=0):
     if request.method == 'GET':
         if id:
             user = User.objects.filter(id = id)
+            user_serilizer = UserSerilizer(user, many=True)
+            return JsonResponse(user_serilizer.data[0], safe = False)
+        elif(request.path == '/user/active'):
+            user = User.objects.filter(Active = True)
             user_serilizer = UserSerilizer(user, many=True)
             return JsonResponse(user_serilizer.data[0], safe = False)
         else:
