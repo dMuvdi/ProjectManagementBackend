@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/2496d9ad-55ef-477e-ba01-07d87aaec861/microsoft.web/sites/subscriptions/2496d9ad-55ef-477e-ba01-07d87aaec861/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/Everest-Projects",
+    "appService.deploySubpath": "."
+}

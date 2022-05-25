@@ -8,6 +8,8 @@ from django.core.files.storage import default_storage
 from rest_framework import generics
 from BackendApp import urls
 from django.urls import reverse
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 
@@ -52,7 +54,10 @@ def userApi(request, id=0):
         elif(request.path == '/user/active'):
             user = User.objects.filter(Active = True)
             user_serilizer = UserSerilizer(user, many=True)
-            return JsonResponse(user_serilizer.data[0], safe = False)
+            if user:
+                return JsonResponse(user_serilizer.data[0], safe = False)
+            else:
+                return JsonResponse("No active users", safe = False)
         else:
             user = User.objects.all()
             user_serilizer = UserSerilizer(user, many=True)
@@ -62,9 +67,9 @@ def userApi(request, id=0):
         user_serilizer = UserSerilizer(data = user_data)
         if user_serilizer.is_valid():
             user_serilizer.save()
-            return JsonResponse("Added Succesfully", safe = False)
-        return JsonResponse("Failed to Add", safe = False)
-    elif request.method == 'PUT' :
+            return JsonResponse({"success":True}, safe = False)
+        return JsonResponse({"success":False}, safe = False)
+    elif request.method == 'PUT':
         user_data=JSONParser().parse(request)
         user=User.objects.get(id=user_data['id'])
         user_serilizer=UserSerilizer(user, data=user_data)
@@ -81,9 +86,50 @@ def userApi(request, id=0):
 def SaveFile(request):
     file = request.FILES['file']
     file_name = default_storage.save(file.name,file)
-    return JsonResponse(file_name, safe = False)
+    return HttpResponse(file_name)
 
 class StatesView(generics.RetrieveAPIView):
     queryset = States.objects.all()
     serializer_class = StatesSerilizer
 
+@csrf_exempt
+def userLogIn(request, email, password):
+    if request.method == 'PUT':
+        user = User.objects.filter(Email = email, Password = password).update(Active=True)
+        user_serilizer=UserSerilizer(user, data=user)
+        if user:
+            return JsonResponse({"success":True}, safe = False)
+        else:
+            return JsonResponse({"success":False}, safe = False)
+            
+
+@csrf_exempt
+def userLogOff(request, email):
+    if request.method == 'PUT':
+        user = User.objects.filter(Email = email).update(Active=False)
+        user_serilizer=UserSerilizer(user, data=user)
+        if user:
+            return JsonResponse({"success":True}, safe = False)
+        else:
+            return JsonResponse({"success":False}, safe = False)
+
+
+@csrf_exempt
+def projectSearch(request, searchTitle):
+    if request.method == 'GET':
+        project = Project.objects.filter(Title__contains=searchTitle)
+        project_serilizer=ProjectSerilizer(project, many=True)
+        if project:
+            return JsonResponse(project_serilizer.data[0], safe = False)
+        else:
+            return JsonResponse("No projects found", safe = False)
+
+@csrf_exempt
+def userMyProject(request, id):
+    if request.method == 'GET':
+        project = Project.objects.filter(Author_id__in = [id])
+        project_serilizer=ProjectSerilizer(project, many=True)
+        if project:
+            return JsonResponse(project_serilizer.data[0], safe = False)
+        else:
+            return JsonResponse("No projects found", safe = False)

@@ -31,6 +31,7 @@ SECRET_KEY = 'django-insecure-%5(*pe#mli7n5#ob_ybznc5g+w-$jan1991r8wfp4=pmvf)h33
 DEBUG = True
 
 ALLOWED_HOSTS = []
+#'everest-projects.azurewebsites.net'
 
 
 # Application definition
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
 CORS_ORIGIN_ALLOW_ALL = True
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
